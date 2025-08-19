@@ -115,12 +115,6 @@ Authorization: Bearer <jwt_token>
 **POST** `/bookings`
 *Requires Authentication*
 
-
-### 4.4 Process Payment
-**POST** `/bookings/{booking_id}/payment`
-*Requires Authentication*
-
-
 ---
 
 ## 5. Events & Experiences
@@ -238,7 +232,6 @@ All API endpoints return errors in the following format:
 - `AUTHORIZATION_FAILED` - Insufficient permissions
 - `RESOURCE_NOT_FOUND` - Requested resource doesn't exist
 - `SEATS_NOT_AVAILABLE` - Selected seats are no longer available
-- `PAYMENT_FAILED` - Payment processing failed
 - `BOOKING_EXPIRED` - Booking hold has expired
 
 ---
