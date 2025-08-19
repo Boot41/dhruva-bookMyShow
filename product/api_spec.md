@@ -208,30 +208,4 @@ Authorization: Bearer <jwt_token>
 
 ---
 
-## Error Responses
 
-All API endpoints return errors in the following format:
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid request data",
-    "details": {
-      "field": "email",
-      "reason": "Invalid email format"
-    }
-  }
-}
-```
-
-### Common Error Codes:
-- `VALIDATION_ERROR` - Invalid request data
-- `AUTHENTICATION_REQUIRED` - Missing or invalid authentication
-- `AUTHORIZATION_FAILED` - Insufficient permissions
-- `RESOURCE_NOT_FOUND` - Requested resource doesn't exist
-- `SEATS_NOT_AVAILABLE` - Selected seats are no longer available
-- `BOOKING_EXPIRED` - Booking hold has expired
-
----
