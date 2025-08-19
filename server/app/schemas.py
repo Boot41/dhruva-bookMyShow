@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
-from datetime import date
+from datetime import date, time
 
 
 class UserBase(BaseModel):
@@ -49,3 +49,39 @@ class MovieOut(MovieBase):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+# Theater & Showtime Schemas
+class CityOut(BaseModel):
+    id: int
+    name: str
+    state: str | None = None
+    country: str
+
+    class Config:
+        from_attributes = True
+
+
+class TheaterOut(BaseModel):
+    id: int
+    name: str
+    address: str
+    city_id: int
+    amenities: dict | None = None
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
+class ShowOut(BaseModel):
+    id: int
+    movie_id: int
+    screen_id: int
+    show_date: date
+    show_time: time
+    base_price: float
+    available_seats: int
+
+    class Config:
+        from_attributes = True
