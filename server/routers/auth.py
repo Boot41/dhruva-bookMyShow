@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+import logging
 from sqlalchemy.orm import Session
 
 from app import schemas
@@ -8,6 +9,7 @@ from app.models import User
 from app.security import hash_password, verify_password, create_access_token, decode_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -33,9 +35,15 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=schemas.Token)
-def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == payload.email).first()
-    if not user or not verify_password(payload.password, user.password_hash):
+def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
+
+    user = db.query(User).filter(User.email == credentials.email).first()
+    if not user:
+        logger.info(f"Login failed: email not found: {credentials.email}")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+
+    if not verify_password(credentials.password, user.password_hash):
+        logger.info(f"Login failed: password mismatch for user_id={user.id} email={user.email}")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     token = create_access_token(subject=user.id)
