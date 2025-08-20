@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary Colors (BookMyShow Red) */
+  --color-primary-50: oklch(0.98 0.02 27);
+  --color-primary-100: oklch(0.95 0.04 27);
+  --color-primary-200: oklch(0.88 0.08 27);
+  --color-primary-300: oklch(0.78 0.12 27);
+  --color-primary-400: oklch(0.68 0.16 27);
+  --color-primary-500: oklch(0.60 0.20 27); /* Main Red (#E71A0F approx) */
+  --color-primary-600: oklch(0.50 0.18 27);
+  --color-primary-700: oklch(0.40 0.15 27);
+  --color-primary-800: oklch(0.30 0.12 27);
+  --color-primary-900: oklch(0.22 0.08 27);
+  --color-primary-950: oklch(0.15 0.05 27);
+
+  /* 🎥 Secondary Colors (Dark Theater Gray) */
+  --color-secondary-50: oklch(0.97 0.01 270);
+  --color-secondary-100: oklch(0.92 0.01 270);
+  --color-secondary-200: oklch(0.80 0.02 270);
+  --color-secondary-300: oklch(0.65 0.02 270);
+  --color-secondary-400: oklch(0.50 0.01 270);
+  --color-secondary-500: oklch(0.40 0.01 270); /* Main Charcoal (#1F1F1F) */
+  --color-secondary-600: oklch(0.30 0.01 270);
+  --color-secondary-700: oklch(0.22 0.01 270);
+  --color-secondary-800: oklch(0.15 0.01 270);
+  --color-secondary-900: oklch(0.10 0.01 270);
+  --color-secondary-950: oklch(0.06 0.01 270);
+
+  /* Accent Colors */
+  --color-accent-yellow: oklch(0.85 0.18 90);  /* Ratings */
+  --color-accent-blue: oklch(0.70 0.15 250);   /* Links */
+  --color-accent-green: oklch(0.65 0.20 140);  /* Success */
+
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: "Cal Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /*  Spacing */
+  --spacing-xs: 0.125rem;   /* 2px */
+  --spacing-sm: 0.25rem;    /* 4px */
+  --spacing-md: 0.5rem;     /* 8px */
+  --spacing-lg: 1rem;       /* 16px */
+  --spacing-xl: 1.5rem;     /* 24px */
+  --spacing-2xl: 2rem;      /* 32px */
+  --spacing-3xl: 3rem;      /* 48px */
+  --spacing-4xl: 4rem;      /* 64px */
+  --spacing-5xl: 6rem;      /* 96px */
+  --spacing-6xl: 8rem;      /* 128px */
+}
+
+/* Components using Tailwind layer to keep utilities tree-shakeable */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors select-none disabled:opacity-50 disabled:cursor-not-allowed;
+    padding: 0.625rem 1rem; /* 10px 16px */
+    background: var(--color-secondary-700);
+    color: white;
+  }
+  .btn:hover { background: var(--color-secondary-600); }
+  .btn:focus-visible { outline: 2px solid var(--color-primary-300); outline-offset: 2px; }
+
+  .btn-primary { background: var(--color-primary-500); }
+  .btn-primary:hover { background: var(--color-primary-600); }
+
+  .btn-secondary { background: var(--color-secondary-600); }
+  .btn-secondary:hover { background: var(--color-secondary-500); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--color-primary-600);
+    border: 1px solid var(--color-primary-400);
+  }
+  .btn-outline:hover { background: color-mix(in oklab, var(--color-primary-50), white 20%); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-primary-600);
+  }
+  .btn-ghost:hover { background: var(--color-secondary-100); }
+
+  .btn-success { background: var(--color-accent-green); color: black; }
+  .btn-success:hover { filter: brightness(0.95); }
+
+  .btn-warning { background: var(--color-accent-yellow); color: black; }
+  .btn-warning:hover { filter: brightness(0.95); }
+
+  .btn-info { background: var(--color-accent-blue); color: white; }
+  .btn-info:hover { filter: brightness(0.95); }
+
+  /* Button sizes */
+  .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.875rem; }
+  .btn-lg { padding: 0.75rem 1.25rem; font-size: 1rem; }
+  .btn-block { @apply w-full; }
+  .btn-icon { padding: 0.5rem; width: 2.5rem; height: 2.5rem; }
+
+  /* Inputs */
+  .input, .select, .textarea {
+    @apply w-full rounded-md border transition-colors;
+    background: white;
+    border-color: var(--color-secondary-200);
+    color: var(--color-secondary-800);
+  }
+  .input::placeholder, .textarea::placeholder { color: color-mix(in oklab, var(--color-secondary-400), white 10%); }
+  .input:focus, .select:focus, .textarea:focus { outline: 2px solid var(--color-primary-300); outline-offset: 2px; border-color: var(--color-primary-500); }
+  .input:disabled, .select:disabled, .textarea:disabled { background: var(--color-secondary-100); cursor: not-allowed; }
+
+  .input { padding: 0.625rem 0.75rem; }
+  .select { padding: 0.625rem 2rem 0.625rem 0.75rem; }
+  .textarea { padding: 0.625rem 0.75rem; min-height: 6rem; resize: vertical; }
+
+  /* Checkboxes and radios use accent-color for easy theming */
+  .checkbox, .radio { accent-color: var(--color-primary-500); }
+
+  /* Simple toggle using native checkbox */
+  .toggle { accent-color: var(--color-primary-500); width: 2.75rem; height: 1.5rem; }
+
+  /* Form helpers */
+  .form-group { @apply flex flex-col gap-1; }
+  .label { @apply text-sm font-medium text-[color:var(--color-secondary-700)]; }
+  .help-text { @apply text-xs text-[color:var(--color-secondary-500)]; }
+  .error-text { @apply text-xs text-[color:oklch(0.60_0.20_27)]; }
+  .is-invalid { border-color: var(--color-primary-500) !important; }
+
+  /* Badges */
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium; background: var(--color-secondary-100); color: var(--color-secondary-700); }
+  .badge-primary { background: color-mix(in oklab, var(--color-primary-500), white 85%); color: var(--color-primary-700); }
+  .badge-success { background: color-mix(in oklab, var(--color-accent-green), white 80%); color: oklch(0.35 0.08 140); }
+  .badge-info { background: color-mix(in oklab, var(--color-accent-blue), white 80%); color: oklch(0.35 0.08 250); }
+
+  /* Chips */
+  .chip { @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm; border-color: var(--color-secondary-200); background: white; color: var(--color-secondary-800); }
+  .chip .close { @apply cursor-pointer; opacity: 0.6; }
+  .chip .close:hover { opacity: 1; }
+
+  /* Alerts */
+  .alert { @apply rounded-md border p-3 text-sm; background: var(--color-secondary-50); border-color: var(--color-secondary-200); color: var(--color-secondary-800); }
+  .alert-primary { background: color-mix(in oklab, var(--color-primary-500), white 92%); border-color: color-mix(in oklab, var(--color-primary-500), white 75%); color: var(--color-primary-800); }
+  .alert-success { background: color-mix(in oklab, var(--color-accent-green), white 90%); border-color: color-mix(in oklab, var(--color-accent-green), white 70%); color: oklch(0.35 0.08 140); }
+  .alert-info { background: color-mix(in oklab, var(--color-accent-blue), white 90%); border-color: color-mix(in oklab, var(--color-accent-blue), white 70%); color: oklch(0.35 0.08 250); }
+  .alert-warning { background: color-mix(in oklab, var(--color-accent-yellow), white 90%); border-color: color-mix(in oklab, var(--color-accent-yellow), white 70%); color: oklch(0.35 0.08 90); }
+}
+
