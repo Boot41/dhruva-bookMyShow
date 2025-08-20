@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import LandingPageMovieCard from "../components/LandingPageMovieCard";
 import { MoviesApi, type MovieOut } from "../Api/MoviesApi";
 import { useAppStore } from "../store";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingMovieBanner() {
   const selectedCity = useAppStore((s) => s.selectedCity);
   const [movies, setMovies] = useState<MovieOut[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const cityId = selectedCity?.id;
 
@@ -55,7 +57,13 @@ export default function LandingMovieBanner() {
       <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory">
         {movies.map((m) => (
           <div key={m.id} className="snap-start">
-            <LandingPageMovieCard movie={m} />
+            <LandingPageMovieCard
+              movie={m}
+              onClick={() => {
+                if (!cityId) return;
+                navigate(`/book?movie_id=${m.id}&city_id=${cityId}`);
+              }}
+            />
           </div>
         ))}
       </div>

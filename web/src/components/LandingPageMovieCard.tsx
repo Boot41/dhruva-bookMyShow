@@ -3,6 +3,7 @@ import type { MovieOut } from "../Api/MoviesApi";
 type Props = {
   movie: MovieOut;
   className?: string;
+  onClick?: () => void;
 };
 
 function formatVotes(n?: number) {
@@ -12,7 +13,7 @@ function formatVotes(n?: number) {
   return `${n} Votes`;
 }
 
-export default function LandingPageMovieCard({ movie, className = "" }: Props) {
+export default function LandingPageMovieCard({ movie, className = "", onClick }: Props) {
   const genres =
     Array.isArray((movie as any).genres) && (movie as any).genres.length > 0
       ? (movie as any).genres.join("/")
@@ -25,7 +26,12 @@ export default function LandingPageMovieCard({ movie, className = "" }: Props) {
   const poster = movie.poster_url || "";
 
   return (
-    <div className={`w-[210px] flex-shrink-0 ${className}`}>
+    <div
+      className={`w-[210px] flex-shrink-0 ${onClick ? "cursor-pointer" : ""} ${className}`}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
       <div className="relative">
         <div className="rounded-xl overflow-hidden bg-gray-200 aspect-[2/3]">
           {poster ? (
