@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CitySelectorDialog from "../components/CitySelectorDialog";
 import Header from "../components/header";
 import { useAppStore } from "../store";
 import LandingMovieBanner from "../layout/landingMovieBanner";
 
 export default function LandingPage() {
-  const [open, setOpen] = useState(true);
   const selectedCity = useAppStore((state) => state.selectedCity);
+  const [open, setOpen] = useState(!selectedCity);
+
+  useEffect(() => {
+    setOpen(!selectedCity);
+  }, [selectedCity]);
 
   return (
     <div>

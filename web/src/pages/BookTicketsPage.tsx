@@ -122,9 +122,8 @@ export default function BookTicketsPage() {
               movieId={movieId!}
               cityId={cityIdFromUrl ?? selectedCity?.id}
               date={date}
-              onSelectShow={(_show) => {
-                // TODO: navigate to seats page with show.id
-                // navigate(`/seats?show_id=${show.id}`)
+              onSelectShow={(show) => {
+                navigate(`/seats?show_id=${show.id}`);
               }}
             />
           ))}

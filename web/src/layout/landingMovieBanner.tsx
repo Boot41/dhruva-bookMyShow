@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LandingPageMovieCard from "../components/LandingPageMovieCard";
 import { MoviesApi, type MovieOut } from "../Api/MoviesApi";
 import { useAppStore } from "../store";

@@ -74,6 +74,18 @@ class TheaterOut(BaseModel):
         from_attributes = True
 
 
+class ScreenOut(BaseModel):
+    id: int
+    theater_id: int
+    name: str
+    screen_type: str | None = None
+    total_seats: int
+    layout_config: dict
+
+    class Config:
+        from_attributes = True
+
+
 class ShowOut(BaseModel):
     id: int
     movie_id: int

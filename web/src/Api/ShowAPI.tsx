@@ -81,3 +81,43 @@ export async function getMovieShows(
   return shows;
 }
 
+
+/**
+ * Calls GET /shows/{show_id}
+ * Returns Show
+ */
+export async function getShow(showId: number): Promise<Show> {
+  const res = await fetch(`${API_BASE_URL}/shows/${showId}`, {
+    method: "GET",
+    headers: { Accept: "application/json" },
+  });
+
+  let data: unknown = null;
+  try {
+    data = await res.json();
+  } catch {
+    // ignore JSON parse errors
+  }
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || "Failed to load show";
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  const s = data as any;
+  if (
+    !s ||
+    typeof s.id !== "number" ||
+    typeof s.movie_id !== "number" ||
+    typeof s.screen_id !== "number" ||
+    typeof s.show_date !== "string" ||
+    typeof s.show_time !== "string" ||
+    typeof s.base_price !== "number" ||
+    typeof s.available_seats !== "number"
+  ) {
+    throw new ApiError("Malformed show response", res.status, data);
+  }
+
+  return s as Show;
+}
+
