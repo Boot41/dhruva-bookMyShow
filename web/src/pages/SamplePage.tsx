@@ -11,6 +11,7 @@ import {
   CardContent,
   CardFooter,
 } from '../UI'
+import Header from '../components/header'
 
 export default function SamplePage() {
   const [city, setCity] = useState('')
@@ -20,7 +21,7 @@ export default function SamplePage() {
   return (
     <div className="mx-auto max-w-4xl p-6 space-y-8">
       <h1 className="text-2xl font-bold text-[color:var(--color-secondary-900)]">UI Sample</h1>
-
+      <Header />
       <Card>
         <CardHeader>
           <CardTitle>Buttons</CardTitle>

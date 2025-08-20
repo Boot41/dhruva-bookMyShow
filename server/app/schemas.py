@@ -67,7 +67,7 @@ class TheaterOut(BaseModel):
     name: str
     address: str
     city_id: int
-    amenities: dict | None = None
+    amenities: list[str] | None = None
     is_active: bool
 
     class Config:

@@ -9,9 +9,9 @@ from app.models import City, Theater, Show, Screen
 router = APIRouter(tags=["theaters"])
 
 
-@router.get("/cities", response_model=list[schemas.CityOut])
-def list_cities(db: Session = Depends(get_db)):
-    return db.query(City).all()
+# @router.get("/cities", response_model=list[schemas.CityOut])
+# def list_cities(db: Session = Depends(get_db)):
+#     return db.query(City).all()
 
 
 @router.get("/theaters", response_model=list[schemas.TheaterOut])
