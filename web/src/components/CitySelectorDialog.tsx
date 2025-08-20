@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Spinner } from "../UI";
 import { fetchCities, type City } from "../Api/CitiesAPI";
+import { useAppStore } from "../store";
 
 export type CitySelectorDialogProps = {
   open: boolean;
@@ -24,6 +25,7 @@ export default function CitySelectorDialog({
   const [error, setError] = useState<string | null>(null);
   const [cities, setCities] = useState<City[]>([]);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const setSelectedCity = useAppStore((state) => state.setSelectedCity);
 
   useEffect(() => {
     let cancelled = false;
@@ -117,7 +119,10 @@ export default function CitySelectorDialog({
                 <Button
                   key={city.id}
                   variant="primary"
-                  onClick={() => onSelect?.(city)}
+                  onClick={() => {
+                    setSelectedCity(city);
+                    onSelect?.(city);
+                  }}
                 >
                   {city.name}
                 </Button>

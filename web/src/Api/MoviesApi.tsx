@@ -41,6 +41,28 @@ export async function listMovies(): Promise<MovieOut[]> {
 }
 
 /**
+ * GET /movies/playing?city_id={id}
+ * Returns MovieOut[]
+ */
+export async function listPlayingMovies(cityId: number): Promise<MovieOut[]> {
+  const res = await fetch(`${API_BASE_URL}/movies/playing?city_id=${cityId}`, {
+    method: "GET",
+  });
+
+  let data: unknown = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || "Failed to fetch playing movies";
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  return data as MovieOut[];
+}
+
+/**
  * GET /movies/{movie_id}
  * Returns MovieOut
  */
@@ -65,6 +87,7 @@ export async function getMovie(movieId: number): Promise<MovieOut> {
 export const MoviesApi = {
   listMovies,
   getMovie,
+  listPlayingMovies,
   createMovie,
 };
 
