@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Input } from '../UI'
 import { useAppStore } from '../store'
 import { fetchCities, type City } from '../Api/CitiesAPI'
+import UserMenu from './UserMenu'
 
 type HeaderProps = {
   enableCitySelect?: boolean
@@ -13,6 +14,7 @@ export default function Header({ enableCitySelect = false }: HeaderProps) {
   const [query, setQuery] = useState('')
   const selectedCity = useAppStore((s) => s.selectedCity)
   const setSelectedCity = useAppStore((s) => s.setSelectedCity)
+  const user = useAppStore((s) => s.user)
   const [cities, setCities] = useState<City[]>([])
   const [loadingCities, setLoadingCities] = useState(false)
   const [citiesError, setCitiesError] = useState<string | null>(null)
@@ -34,31 +36,30 @@ export default function Header({ enableCitySelect = false }: HeaderProps) {
   }, [enableCitySelect])
 
   return (
-    <header className="w-full border-b bg-white sticky top-0 z-10 pb-xl">
-      <div className="mx-auto flex items-center gap-4">
+    <header className="w-full border-b bg-white sticky top-0 z-10">
+      <div className="mx-auto max-w-7xl px-4 flex items-center gap-4 h-16">
         {/* Left: Brand/Title */}
-        <div className="text-xl font-bold" style={{ fontFamily: 'var(--font-display)' }}>
+        <div className="text-xl font-bold shrink-0" style={{ fontFamily: 'var(--font-display)' }}>
           BookMyShow
         </div>
 
         {/* Center: Search */}
-        <div className="flex-2 justify-center px-5">
-          <div>
-            <Input
-              type="text"
-              placeholder="Search for movies, theaters..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search"
-            />
-          </div>
+        <div className="flex-1">
+          <Input
+            type="text"
+            placeholder="Search for movies, theaters..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search"
+            className="h-11"
+          />
         </div>
 
         {/* City Select (Landing-only) */}
         {enableCitySelect && (
           <div className="min-w-[12rem]">
             <select
-              className="select"
+              className="select h-11"
               aria-label="Select city"
               value={selectedCity?.id ?? ''}
               onChange={(e) => {
@@ -95,18 +96,22 @@ export default function Header({ enableCitySelect = false }: HeaderProps) {
           </div>
         )}
         {!enableCitySelect && selectedCity && (
-          <div className="p-2">
+          <div className="px-1">
             <span className="text-xl italic font-semibold" aria-label="Selected city">
               {selectedCity.name}
             </span>
           </div>
         )}
 
-        {/* Right: Sign In */}
+        {/* Right: Auth */}
         <div className="ml-auto">
-          <Button variant="primary" onClick={handleSignIn}>
-            Sign In
-          </Button>
+          {user ? (
+            <UserMenu />
+          ) : (
+            <Button variant="primary" className="h-11" onClick={handleSignIn}>
+              Sign In
+            </Button>
+          )}
         </div>
       </div>
     </header>

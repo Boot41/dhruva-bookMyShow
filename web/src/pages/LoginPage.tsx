@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '../UI'
 import { login, ApiError, type LoginRequest } from '../Api/LoginAPI'
+import { useAppStore } from '../store'
 
 export default function LoginPage() {
   const [formData, setFormData] = useState<LoginRequest>({
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [loginError, setLoginError] = useState<string>('')
   const navigate = useNavigate()
+  const setUser = useAppStore((s) => s.setUser)
 
   const handleInputChange = (field: keyof LoginRequest) => (
     e: React.ChangeEvent<HTMLInputElement>
@@ -62,6 +64,9 @@ export default function LoginPage() {
       // Store token in localStorage (you might want to use a more secure method)
       localStorage.setItem('access_token', tokenResponse.access_token)
       
+      // Save user in global store so header updates
+      setUser({ token: tokenResponse, email: formData.email })
+
       // Navigate to home page after successful login
       console.log('Login successful:', tokenResponse)
       navigate('/')
@@ -164,13 +169,13 @@ export default function LoginPage() {
                 </a>
                 <div className="text-sm" style={{ color: 'var(--color-secondary-500)' }}>
                   Don't have an account?{' '}
-                  <a
-                    href="#register"
+                  <Link
+                    to="/signup"
                     className="hover:underline"
                     style={{ color: 'var(--color-primary-500)' }}
                   >
                     Sign up here
-                  </a>
+                  </Link>
                 </div>
               </div>
             </form>

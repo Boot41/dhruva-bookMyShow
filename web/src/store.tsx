@@ -5,6 +5,7 @@ import type { Theater } from './Api/TheatersAPI';
 import type { Show } from './Api/ShowAPI';
 import { getTheaters } from './Api/TheatersAPI';
 import { getMovieShows } from './Api/ShowAPI';
+import type { TokenResponse } from './Api/LoginAPI';
 
 type Cached<T> = { data: T; ts: number };
 
@@ -12,6 +13,11 @@ type TheatersKey = string; // `${cityId}|${movieId}`
 type ShowsKey = string; // `${movieId}|${theaterId}|${cityId}|${date}`
 
 const TTL_MS = 2 * 60 * 1000; // 2 minutes
+
+type User = {
+  token: TokenResponse;
+  email?: string;
+};
 
 interface AppState {
   // UI selections (persisted)
@@ -23,6 +29,12 @@ interface AppState {
   setSelectedDate: (date: string | null) => void;
   setSelectedSeats: (seats: number[]) => void;
   clearSelectedSeats: () => void;
+
+  // Auth (persisted)
+  user: User | null;
+  setUser: (user: User | null) => void;
+  clearUser: () => void;
+  isAuthenticated: () => boolean;
 
   // Caches (non-persisted)
   theatersCache: Record<TheatersKey, Cached<Theater[]> | undefined>;
@@ -61,6 +73,11 @@ export const useAppStore = create<AppState>()(
       setSelectedDate: (date) => set({ selectedDate: date }),
       setSelectedSeats: (seats) => set({ selectedSeats: seats }),
       clearSelectedSeats: () => set({ selectedSeats: [] }),
+
+      user: null,
+      setUser: (user) => set({ user }),
+      clearUser: () => set({ user: null }),
+      isAuthenticated: () => !!get().user,
 
       theatersCache: {},
       showsCache: {},
@@ -123,7 +140,12 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'app-store',
-      partialize: (state) => ({ selectedCity: state.selectedCity, selectedDate: state.selectedDate, selectedSeats: state.selectedSeats }),
+      partialize: (state) => ({
+        selectedCity: state.selectedCity,
+        selectedDate: state.selectedDate,
+        selectedSeats: state.selectedSeats,
+        user: state.user,
+      }),
     }
   )
 );

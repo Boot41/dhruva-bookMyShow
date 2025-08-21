@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import BookTicketsPage from './pages/BookTicketsPage'
 import SeatsPage from './pages/SeatsPage'
 import BookingSummaryPage from './pages/BookingSummaryPage'
+import SignupPage from './pages/SignupPage'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/samplePage" element={<SamplePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route path="/book" element={<BookTicketsPage />} />
       <Route path="/seats" element={<SeatsPage />} />
       <Route path="/summary" element={<BookingSummaryPage />} />
