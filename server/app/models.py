@@ -16,7 +16,8 @@ class User(Base):
         UniqueConstraint("phone", name="uq_users_phone"),
     )
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    # Use Integer PK to ensure SQLite autoincrement works correctly
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     phone: Mapped[str | None] = mapped_column(String(32), nullable=True)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)

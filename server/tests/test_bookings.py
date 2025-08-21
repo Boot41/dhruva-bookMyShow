@@ -2,7 +2,6 @@ import os
 import sys
 from pathlib import Path
 import tempfile
-import os as _os
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient

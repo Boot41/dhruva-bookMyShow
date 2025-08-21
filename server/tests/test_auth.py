@@ -6,6 +6,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import tempfile
+from sqlalchemy.pool import StaticPool
 
 # Ensure the app uses SQLite for import-time engine creation
 os.environ.setdefault("BMS_DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -16,23 +18,22 @@ if str(SERVER_DIR) not in sys.path:
     sys.path.insert(0, str(SERVER_DIR))
 
 from server.routers import auth
-from server.app.db import get_db
-from server.app.models import Base, User
-from server.app import security
-
-
-# Use an in-memory SQLite database for tests
-SQLALCHEMY_DATABASE_URL = "sqlite+pysqlite:///:memory:"
-
-test_engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+from app.db import get_db
+from app.models import Base, User
+from app import security
 
 
 @pytest.fixture()
 def test_app_client():
-    # Create only the tables we need to avoid dialect issues (e.g., JSONB on SQLite)
+    # Use a shared in-memory SQLite database for this test run
+    test_engine = create_engine(
+        "sqlite+pysqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+
+    # Create only the tables we need
     Base.metadata.create_all(bind=test_engine, tables=[User.__table__])
 
     app = FastAPI()
@@ -50,8 +51,7 @@ def test_app_client():
     with TestClient(app) as client:
         yield client
 
-    # Cleanup the database schema between tests
-    Base.metadata.drop_all(bind=test_engine, tables=[User.__table__])
+    # No file cleanup needed for in-memory DB
 
 
 def register_payload(**overrides):
