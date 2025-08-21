@@ -102,3 +102,13 @@ class Booking(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(), server_default=func.now(), nullable=True
     )
+
+
+class BookingSeat(Base):
+    __tablename__ = "booking_seats"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    booking_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("bookings.id"), index=True)
+    show_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("shows.id"), index=True)
+    # Storing selected seat ids as an array in JSONB per table design
+    seat_id: Mapped[list[int]] = mapped_column(JSONB, nullable=False)

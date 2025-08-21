@@ -136,3 +136,20 @@ class BookingSeatsStatusResponse(BaseModel):
     show_id: int
     # Seats that are currently not available for selection (held or booked)
     unavailable_seat_numbers: list[int]
+
+
+# Booking Seats persistence
+class BookingSeatCreate(BaseModel):
+    show_id: int
+    booking_id: int
+    seat_id: list[int]
+
+
+class BookingSeatOut(BaseModel):
+    id: int
+    show_id: int
+    booking_id: int
+    seat_id: list[int]
+
+    class Config:
+        from_attributes = True

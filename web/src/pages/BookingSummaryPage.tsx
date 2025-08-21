@@ -5,7 +5,7 @@ import { useAppStore } from "../store";
 import { getShow, type Show } from "../Api/ShowAPI";
 import { getScreen, type Screen } from "../Api/ScreensAPI";
 import { getMovie, type MovieOut } from "../Api/MoviesApi";
-import { createBooking } from "../Api/BookingsAPI";
+import { createBooking, createBookingSeats } from "../Api/BookingsAPI";
 
 export default function BookingSummaryPage() {
   const location = useLocation();
@@ -143,8 +143,19 @@ export default function BookingSummaryPage() {
                       setError(null);
                       try {
                         const booking = await createBooking({ show_id: showId, seat_numbers: selectedSeats });
+                        // Lock the seats against the created booking
+                        try {
+                          await createBookingSeats({
+                            show_id: showId,
+                            booking_id: booking.id,
+                            seat_id: selectedSeats,
+                          });
+                        } catch (e: any) {
+                          // If locking fails, surface error and stop further flow
+                          throw new Error(e?.message || "Failed to lock seats for booking");
+                        }
                         // For now, just notify and stay; future: navigate to payment page
-                        alert(`Booking created. ID: ${booking.id}\nAmount: ₹${booking.final_amount.toFixed(2)}`);
+                        alert(`Booking created and seats locked. ID: ${booking.id}\nAmount: ₹${booking.final_amount.toFixed(2)}`);
                       } catch (e: any) {
                         setError(e?.message || "Failed to create booking");
                       } finally {

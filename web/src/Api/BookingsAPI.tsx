@@ -47,6 +47,20 @@ export class ApiError extends Error {
   }
 }
 
+// Booking seats persistence (lock)
+export type BookingSeatCreateReq = {
+  show_id: number;
+  booking_id: number;
+  seat_id: number[];
+};
+
+export type BookingSeatOut = {
+  id: number;
+  show_id: number;
+  booking_id: number;
+  seat_id: number[];
+};
+
 /**
  * POST /booking_seats to hold seats for a show.
  */
@@ -70,6 +84,31 @@ export async function holdBookingSeats(
   }
 
   return data as BookingSeatsHoldResponse;
+}
+
+/**
+ * POST /booking_seats to create booking seat lock tied to a booking
+ */
+export async function createBookingSeats(
+  req: BookingSeatCreateReq
+): Promise<BookingSeatOut> {
+  const res = await fetch(`${API_BASE_URL}/booking_seats`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req),
+  });
+
+  let data: unknown = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || "Failed to lock seats";
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  return data as BookingSeatOut;
 }
 
 /**

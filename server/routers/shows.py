@@ -33,9 +33,6 @@ def get_movie_shows(
             Theater.is_active == True,
         )
     )
-
-    print(q)
-
     if theater_id is not None:
         q = q.filter(Theater.id == theater_id)
 

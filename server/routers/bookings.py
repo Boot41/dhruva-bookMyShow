@@ -5,7 +5,7 @@ import string
 
 from app.db import get_db
 from app import schemas
-from app.models import Show, Booking
+from app.models import Show, Booking, BookingSeat
 
 router = APIRouter(tags=["bookings"])
 
@@ -42,4 +42,72 @@ def create_booking(payload: schemas.BookingCreate, db: Session = Depends(get_db)
     db.refresh(booking)
 
     return booking
+
+
+@router.post(
+    "/booking-seats",
+    response_model=schemas.BookingSeatOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_booking_seats(payload: schemas.BookingSeatCreate, db: Session = Depends(get_db)):
+    # Validate booking
+    booking = db.get(Booking, payload.booking_id)
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    # Validate show
+    show = db.get(Show, payload.show_id)
+    if not show:
+        raise HTTPException(status_code=404, detail="Show not found")
+
+    # Basic validation for seats
+    if not payload.seat_id or any((not isinstance(x, int)) or x <= 0 for x in payload.seat_id):
+        raise HTTPException(status_code=400, detail="Invalid seat_id list")
+
+    booking_seats = BookingSeat(
+        booking_id=payload.booking_id,
+        show_id=payload.show_id,
+        seat_id=list(dict.fromkeys(payload.seat_id)),  # de-dup while preserving order
+    )
+    db.add(booking_seats)
+    db.commit()
+    db.refresh(booking_seats)
+
+    return booking_seats
+
+
+# Alias with underscore for frontend compatibility
+@router.post(
+    "/booking_seats",
+    response_model=schemas.BookingSeatOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_booking_seats_alias(payload: schemas.BookingSeatCreate, db: Session = Depends(get_db)):
+    return create_booking_seats(payload, db)
+
+
+@router.get(
+    "/shows/{show_id}/booking_seats",
+    response_model=schemas.BookingSeatsStatusResponse,
+)
+def get_booking_seats_status(show_id: int, db: Session = Depends(get_db)):
+    # Validate show exists
+    show = db.get(Show, show_id)
+    if not show:
+        raise HTTPException(status_code=404, detail="Show not found")
+
+    # Collect all seat ids stored against this show
+    rows = db.query(BookingSeat).filter(BookingSeat.show_id == show_id).all()
+    unavailable: list[int] = []
+    for r in rows:
+        # r.seat_id is a list[int]
+        if isinstance(r.seat_id, list):
+            unavailable.extend([n for n in r.seat_id if isinstance(n, int)])
+
+    # de-dup and sort for UX
+    dedup_sorted = sorted(set(unavailable))
+    return schemas.BookingSeatsStatusResponse(
+        show_id=show_id,
+        unavailable_seat_numbers=dedup_sorted,
+    )
 

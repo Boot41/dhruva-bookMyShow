@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/header";
 import { getShow, type Show } from "../Api/ShowAPI";
 import { getScreen, type Screen } from "../Api/ScreensAPI";
+import { getBookingSeatsStatus } from "../Api/BookingsAPI";
 import { useAppStore } from "../store";
 
 export default function SeatsPage() {
@@ -22,8 +23,9 @@ export default function SeatsPage() {
   const [screen, setScreen] = useState<Screen | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [unavailableSeats, setUnavailableSeats] = useState<number[]>([]);
 
-  useEffect(() => {
+  useEffect(() => { 
     let active = true;
     if (!showId) {
       setError("Missing show_id");
@@ -42,6 +44,15 @@ export default function SeatsPage() {
         setScreen(scr);
         // clear any previous selections when opening a new show
         clearSelectedSeats();
+        // fetch seat status (booked/held) for this show
+        try {
+          const status = await getBookingSeatsStatus(showId);
+          if (!active) return;
+          setUnavailableSeats(status.unavailable_seat_numbers || []);
+        } catch (e) {
+          // Non-fatal for UI; proceed without disabling if call fails
+          if (active) setUnavailableSeats([]);
+        }
       } catch (e: any) {
         if (active) setError(e?.message || "Failed to load seats");
       } finally {
@@ -124,20 +135,24 @@ export default function SeatsPage() {
                     const seatNum = i + 1;
                     const exists = seatNum <= grid.total;
                     const isSelected = exists && selectedSeats.includes(seatNum);
+                    const isUnavailable = exists && unavailableSeats.includes(seatNum);
                     return (
                       <button
                         key={i}
                         className={`w-8 h-8 text-xs rounded border transition-colors ${
                           !exists
                             ? "bg-gray-100 text-transparent cursor-default"
+                            : isUnavailable
+                            ? "bg-gray-300 text-gray-600 border-gray-400 cursor-not-allowed"
                             : isSelected
                             ? "bg-emerald-600 text-white border-emerald-700"
                             : "bg-emerald-50 hover:bg-emerald-100"
                         }`}
-                        disabled={!exists}
+                        disabled={!exists || isUnavailable}
                         title={exists ? `Seat ${seatNum}` : ""}
                         onClick={() => {
                           if (!exists) return;
+                          if (isUnavailable) return;
                           if (isSelected) {
                             setSelectedSeats(selectedSeats.filter((n) => n !== seatNum));
                           } else {
