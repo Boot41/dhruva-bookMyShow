@@ -97,3 +97,42 @@ class ShowOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Bookings
+class BookingCreate(BaseModel):
+    show_id: int
+    seat_numbers: list[int]
+
+
+class BookingOut(BaseModel):
+    id: int
+    user_id: int | None = None
+    booking_type: str
+    show_id: int | None = None
+    event_id: int | None = None
+    booking_reference: str
+    final_amount: float
+    booking_status: str
+    created_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+
+
+# Booking Seats (per-seat reservations)
+class BookingSeatsHoldRequest(BaseModel):
+    show_id: int
+    seat_numbers: list[int]
+
+
+class BookingSeatsHoldResponse(BaseModel):
+    show_id: int
+    held_seat_numbers: list[int]
+    unavailable_seat_numbers: list[int]
+
+
+class BookingSeatsStatusResponse(BaseModel):
+    show_id: int
+    # Seats that are currently not available for selection (held or booked)
+    unavailable_seat_numbers: list[int]

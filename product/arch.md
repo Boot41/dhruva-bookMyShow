@@ -167,6 +167,7 @@ This document outlines the database schema for the BookMyShow platform, designed
 | `id`         | BIGSERIAL | PK                  |
 | `booking_id` | BIGINT    | FK to `bookings.id` |
 | `seat_id`    | BIGINT    | FK to `seats.id`    |
+*UNIQUE (booking_id, seat_id)*
 
 #### 14. `booking_event_tickets`
 *Junction table for event bookings and ticket categories.*
@@ -177,6 +178,7 @@ This document outlines the database schema for the BookMyShow platform, designed
 | `booking_id`         | BIGINT    | FK to `bookings.id`                 |
 | `ticket_category_id` | BIGINT    | FK to `event_ticket_categories.id`  |
 | `quantity`           | INTEGER   | NOT NULL                            |
+*UNIQUE (booking_id, ticket_category_id)*
 
 #### 16. `reviews`
 *Stores user reviews for movies and events.*

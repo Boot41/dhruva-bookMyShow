@@ -86,3 +86,19 @@ class Show(Base):
     show_time: Mapped[time] = mapped_column(Time, nullable=False)
     base_price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     available_seats: Mapped[int] = mapped_column(Integer, nullable=False)
+
+
+class Booking(Base):
+    __tablename__ = "bookings"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    user_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    booking_type: Mapped[str] = mapped_column(String(20), nullable=False)
+    show_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("shows.id"), nullable=True, index=True)
+    event_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    booking_reference: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    final_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    booking_status: Mapped[str] = mapped_column(String(50), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(), server_default=func.now(), nullable=True
+    )

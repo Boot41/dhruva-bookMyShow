@@ -5,6 +5,7 @@ import { useAppStore } from "../store";
 import { getShow, type Show } from "../Api/ShowAPI";
 import { getScreen, type Screen } from "../Api/ScreensAPI";
 import { getMovie, type MovieOut } from "../Api/MoviesApi";
+import { createBooking } from "../Api/BookingsAPI";
 
 export default function BookingSummaryPage() {
   const location = useLocation();
@@ -22,6 +23,7 @@ export default function BookingSummaryPage() {
   const [movie, setMovie] = useState<MovieOut | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -134,13 +136,23 @@ export default function BookingSummaryPage() {
                   </button>
                   <button
                     className="px-4 py-2 text-sm rounded bg-rose-600 text-white disabled:opacity-60"
-                    disabled={selectedSeats.length === 0}
-                    onClick={() => {
-                      // Placeholder for booking/hold flow. Future: call hold API then create booking.
-                      alert("Proceeding to payment (stub). Implement hold/booking APIs.");
+                    disabled={selectedSeats.length === 0 || !showId || submitting}
+                    onClick={async () => {
+                      if (!showId) return;
+                      setSubmitting(true);
+                      setError(null);
+                      try {
+                        const booking = await createBooking({ show_id: showId, seat_numbers: selectedSeats });
+                        // For now, just notify and stay; future: navigate to payment page
+                        alert(`Booking created. ID: ${booking.id}\nAmount: ₹${booking.final_amount.toFixed(2)}`);
+                      } catch (e: any) {
+                        setError(e?.message || "Failed to create booking");
+                      } finally {
+                        setSubmitting(false);
+                      }
                     }}
                   >
-                    Continue to Pay
+                    {submitting ? "Creating…" : "Continue to Pay"}
                   </button>
                 </div>
               </div>
