@@ -74,6 +74,18 @@ export default function UserMenu() {
           >
             Profile
           </button>
+          {user.is_theater_admin && (
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 hover:bg-[color:var(--color-secondary-100)]"
+              onClick={() => {
+                setOpen(false)
+                navigate('/theater-management')
+              }}
+            >
+              Theater Management
+            </button>
+          )}
           <button
             type="button"
             className="w-full text-left px-3 py-2 hover:bg-[color:var(--color-secondary-100)]"

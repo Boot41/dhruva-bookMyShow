@@ -9,6 +9,8 @@ export type LoginRequest = {
 export type TokenResponse = {
   access_token: string;
   token_type: string;
+  // Backend may include admin flag
+  is_theater_admin?: boolean;
 };
 
 export type UserOut = {
@@ -33,7 +35,7 @@ export class ApiError extends Error {
 
 /**
  * Calls POST /auth/login with { email, password }
- * Returns { access_token, token_type }
+ * Returns { access_token, token_type, is_theater_admin? }
  */
 export async function login(req: LoginRequest): Promise<TokenResponse> {
   const res = await fetch(`${API_BASE_URL}/auth/login`, {

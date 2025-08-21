@@ -11,6 +11,7 @@ from routers import cities as cities_router
 from routers import screens as screens_router
 from routers import bookings as bookings_router
 from routers import search as search_router
+from routers import theater_memberships as theater_memberships_router
 
 app = FastAPI(title="BookMyShow Backend")
 
@@ -44,3 +45,4 @@ app.include_router(cities_router.router)
 app.include_router(screens_router.router)
 app.include_router(bookings_router.router)
 app.include_router(search_router.router)
+app.include_router(theater_memberships_router.router)

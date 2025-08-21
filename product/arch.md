@@ -213,6 +213,20 @@ This document outlines the database schema for the BookMyShow platform, designed
 | `total_amount` | DECIMAL   | NOT NULL            |
 | `order_status` | VARCHAR   | NOT NULL            |
 
+#### 19. `theater_admins`
+*Maps users to theaters where they have admin privileges (can add/remove movies/shows).* 
+ 
+| Name         | DataType  | Notes                              |
+|--------------|-----------|------------------------------------|
+| `id`         | BIGSERIAL | PK                                 |
+| `user_id`    | BIGINT    | FK to `users.id`, NOT NULL         |
+| `theater_id` | BIGINT    | FK to `theaters.id`, NOT NULL      |
+| `role`       | VARCHAR   | NOT NULL, e.g., 'owner','manager'  |
+| `permissions`| JSONB     | Optional fine-grained flags        |
+| `is_active`  | BOOLEAN   |                                    |
+| `created_at` | TIMESTAMP |                                    |
+*UNIQUE (`user_id`, `theater_id`)*
+
 ---
 
 ### Indexes and Constraints
@@ -247,9 +261,13 @@ This document outlines the database schema for the BookMyShow platform, designed
 -   **`booking_seats`**: 
     -   Index on `(booking_id)`.
     -   Index on `(seat_id)`.
+-   **`theater_admins`**:
+     -   Unique constraint on `(user_id, theater_id)`.
+     -   Index on `(user_id)` to fetch all theaters a user administers.
+     -   Index on `(theater_id)` to list all admins for a theater.
 -   **`payments`**: 
-    -   Index on `(booking_id)`.
-    -   Index on `(gateway_transaction_id)`.
+     -   Index on `(booking_id)`.
+     -   Index on `(gateway_transaction_id)`.
 -   **`reviews`**: 
-    -   Index on `(user_id)`.
-    -   Index on `(movie_id)` and `(event_id)`.
+     -   Index on `(user_id)`.
+     -   Index on `(movie_id)` and `(event_id)`.

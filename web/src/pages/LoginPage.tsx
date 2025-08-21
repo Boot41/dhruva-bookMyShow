@@ -73,10 +73,11 @@ export default function LoginPage() {
           id: me.id,
           first_name: me.first_name,
           last_name: me.last_name,
+          is_theater_admin: tokenResponse.is_theater_admin,
         })
       } catch (e) {
         // Fallback: store token and email only
-        setUser({ token: tokenResponse, email: formData.email })
+        setUser({ token: tokenResponse, email: formData.email, is_theater_admin: tokenResponse.is_theater_admin })
       }
 
       // Navigate to home page after successful login

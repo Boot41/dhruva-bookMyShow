@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 
 from app import schemas
 from app.db import get_db
-from app.models import User
+from app.models import User, TheaterUserMembership
+from useage.auth_service import is_user_theater_admin
 from app.security import hash_password, verify_password, create_access_token, decode_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -47,7 +48,9 @@ def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     token = create_access_token(subject=user.id)
-    return schemas.Token(access_token=token)
+    # Check if the user has any theater admin membership via service helper
+    is_admin = is_user_theater_admin(user.id, db)
+    return schemas.Token(access_token=token, is_theater_admin=is_admin)
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:

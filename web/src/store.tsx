@@ -20,6 +20,10 @@ type User = {
   id?: number; // fetched via /auth/me
   first_name?: string;
   last_name?: string;
+  // Optional: indicates if user has admin privileges for any theater
+  is_theater_admin?: boolean;
+  // Optional: list of theater IDs the user administers (for future scoping)
+  theater_admin_of?: number[];
 };
 
 interface AppState {

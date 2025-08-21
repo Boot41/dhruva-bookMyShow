@@ -114,3 +114,21 @@ class BookingSeat(Base):
     show_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("shows.id"), index=True)
     # Storing selected seat ids as an array in JSONB per table design
     seat_id: Mapped[list[int]] = mapped_column(JSONB, nullable=False)
+
+
+class TheaterUserMembership(Base):
+    __tablename__ = "theater_user_memberships"
+    __table_args__ = (
+        UniqueConstraint("user_id", "theater_id", name="uq_theater_user_membership_user_theater"),
+    )
+
+    # BIGSERIAL in Postgres; using BigInteger PK for portability
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    # FK to users.id (users.id is Integer in this codebase)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    # FK to theaters.id (theaters.id is BigInteger)
+    theater_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("theaters.id"), index=True, nullable=False)
+    role: Mapped[str] = mapped_column(String(50), nullable=False)
+    permissions: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

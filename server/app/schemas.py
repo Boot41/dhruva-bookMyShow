@@ -45,6 +45,7 @@ class MovieOut(MovieBase):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    is_theater_admin: bool = False
 
 
 # Theater & Showtime Schemas
@@ -137,4 +138,29 @@ class BookingSeatOut(BaseModel):
     show_id: int
     booking_id: int
     seat_id: list[int]
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Theater User Memberships
+class TheaterUserMembershipBase(BaseModel):
+    user_id: int
+    theater_id: int
+    role: str
+    permissions: dict | None = None
+    is_active: bool = True
+
+
+class TheaterUserMembershipCreate(TheaterUserMembershipBase):
+    pass
+
+
+class TheaterUserMembershipUpdate(BaseModel):
+    role: str | None = None
+    permissions: dict | None = None
+    is_active: bool | None = None
+
+
+class TheaterUserMembershipOut(TheaterUserMembershipBase):
+    id: int
+    created_at: datetime
     model_config = ConfigDict(from_attributes=True)
