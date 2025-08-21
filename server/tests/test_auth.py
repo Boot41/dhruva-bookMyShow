@@ -1,4 +1,6 @@
 import os
+import sys
+from pathlib import Path
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -7,6 +9,11 @@ from sqlalchemy.orm import sessionmaker
 
 # Ensure the app uses SQLite for import-time engine creation
 os.environ.setdefault("BMS_DATABASE_URL", "sqlite+pysqlite:///:memory:")
+
+# Make `server/app` resolvable as top-level `app` when importing routers
+SERVER_DIR = Path(__file__).resolve().parents[1]
+if str(SERVER_DIR) not in sys.path:
+    sys.path.insert(0, str(SERVER_DIR))
 
 from server.routers import auth
 from server.app.db import get_db

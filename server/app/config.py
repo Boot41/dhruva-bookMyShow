@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
 
@@ -15,11 +15,13 @@ class Settings(BaseSettings):
     jwt_secret_key: str = Field(default="CHANGE_ME_SUPER_SECRET")
     jwt_algorithm: str = Field(default="HS256")
     access_token_expire_minutes: int = Field(default=60 * 24)  # 24 hours
-
-    class Config:
-        env_prefix = "BMS_"
-        env_file = ".env"
-        case_sensitive = False
+    
+    # Pydantic v2 settings config
+    model_config = SettingsConfigDict(
+        env_prefix="BMS_",
+        env_file=".env",
+        case_sensitive=False,
+    )
 
 
 settings = Settings()

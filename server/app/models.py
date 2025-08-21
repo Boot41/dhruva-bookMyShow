@@ -91,7 +91,8 @@ class Show(Base):
 class Booking(Base):
     __tablename__ = "bookings"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    # Use Integer PK to ensure SQLite autoincrement works correctly
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     booking_type: Mapped[str] = mapped_column(String(20), nullable=False)
     show_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("shows.id"), nullable=True, index=True)

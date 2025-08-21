@@ -29,3 +29,7 @@ dev = [
 
 [tool.uv]
 # You can configure uv settings here if needed (e.g., default-index-url)
+
+[tool.pytest.ini_options]
+# Explicitly set pytest-asyncio default fixture loop scope to avoid deprecation warnings
+asyncio_default_fixture_loop_scope = "function"

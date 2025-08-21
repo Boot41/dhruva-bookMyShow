@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from datetime import datetime
 from datetime import date, time
 
@@ -21,9 +21,7 @@ class UserLogin(BaseModel):
 
 class UserOut(UserBase):
     id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class MovieBase(BaseModel):
     title: str
@@ -41,9 +39,7 @@ class MovieCreate(MovieBase):
 
 class MovieOut(MovieBase):
     id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseModel):
@@ -57,9 +53,7 @@ class CityOut(BaseModel):
     name: str
     state: str | None = None
     country: str
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TheaterOut(BaseModel):
@@ -69,9 +63,7 @@ class TheaterOut(BaseModel):
     city_id: int
     amenities: list[str] | None = None
     is_active: bool
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ScreenOut(BaseModel):
@@ -81,9 +73,7 @@ class ScreenOut(BaseModel):
     screen_type: str | None = None
     total_seats: int
     layout_config: dict
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ShowOut(BaseModel):
@@ -94,9 +84,7 @@ class ShowOut(BaseModel):
     show_time: time
     base_price: float
     available_seats: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Bookings
@@ -116,9 +104,7 @@ class BookingOut(BaseModel):
     final_amount: float
     booking_status: str
     created_at: datetime | None = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Booking Seats (per-seat reservations)
@@ -151,6 +137,4 @@ class BookingSeatOut(BaseModel):
     show_id: int
     booking_id: int
     seat_id: list[int]
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
