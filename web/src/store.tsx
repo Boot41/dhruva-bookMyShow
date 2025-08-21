@@ -17,9 +17,12 @@ interface AppState {
   // UI selections (persisted)
   selectedCity: City | null;
   selectedDate: string | null; // YYYY-MM-DD
+  selectedSeats: number[]; // seat numbers selected on SeatsPage
   setSelectedCity: (city: City | null) => void;
   clearSelectedCity: () => void;
   setSelectedDate: (date: string | null) => void;
+  setSelectedSeats: (seats: number[]) => void;
+  clearSelectedSeats: () => void;
 
   // Caches (non-persisted)
   theatersCache: Record<TheatersKey, Cached<Theater[]> | undefined>;
@@ -52,9 +55,12 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       selectedCity: null,
       selectedDate: null,
+      selectedSeats: [],
       setSelectedCity: (city) => set({ selectedCity: city }),
       clearSelectedCity: () => set({ selectedCity: null }),
       setSelectedDate: (date) => set({ selectedDate: date }),
+      setSelectedSeats: (seats) => set({ selectedSeats: seats }),
+      clearSelectedSeats: () => set({ selectedSeats: [] }),
 
       theatersCache: {},
       showsCache: {},
@@ -117,7 +123,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'app-store',
-      partialize: (state) => ({ selectedCity: state.selectedCity, selectedDate: state.selectedDate }),
+      partialize: (state) => ({ selectedCity: state.selectedCity, selectedDate: state.selectedDate, selectedSeats: state.selectedSeats }),
     }
   )
 );

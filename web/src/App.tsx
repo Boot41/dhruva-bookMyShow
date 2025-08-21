@@ -5,6 +5,7 @@ import SamplePage from './pages/SamplePage'
 import LoginPage from './pages/LoginPage'
 import BookTicketsPage from './pages/BookTicketsPage'
 import SeatsPage from './pages/SeatsPage'
+import BookingSummaryPage from './pages/BookingSummaryPage'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/book" element={<BookTicketsPage />} />
       <Route path="/seats" element={<SeatsPage />} />
+      <Route path="/summary" element={<BookingSummaryPage />} />
     </Routes>
   )
 }

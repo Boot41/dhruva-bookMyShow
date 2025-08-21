@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/header";
 import { getShow, type Show } from "../Api/ShowAPI";
 import { getScreen, type Screen } from "../Api/ScreensAPI";
+import { useAppStore } from "../store";
 
 export default function SeatsPage() {
   const location = useLocation();
@@ -12,6 +13,10 @@ export default function SeatsPage() {
     const v = params.get("show_id");
     return v ? Number(v) : undefined;
   }, [params]);
+
+  const selectedSeats = useAppStore((s) => s.selectedSeats);
+  const setSelectedSeats = useAppStore((s) => s.setSelectedSeats);
+  const clearSelectedSeats = useAppStore((s) => s.clearSelectedSeats);
 
   const [show, setShow] = useState<Show | null>(null);
   const [screen, setScreen] = useState<Screen | null>(null);
@@ -35,6 +40,8 @@ export default function SeatsPage() {
         const scr = await getScreen(s.screen_id);
         if (!active) return;
         setScreen(scr);
+        // clear any previous selections when opening a new show
+        clearSelectedSeats();
       } catch (e: any) {
         if (active) setError(e?.message || "Failed to load seats");
       } finally {
@@ -116,14 +123,27 @@ export default function SeatsPage() {
                   {Array.from({ length: grid.rows * grid.cols }, (_, i) => {
                     const seatNum = i + 1;
                     const exists = seatNum <= grid.total;
+                    const isSelected = exists && selectedSeats.includes(seatNum);
                     return (
                       <button
                         key={i}
-                        className={`w-8 h-8 text-xs rounded border ${
-                          exists ? "bg-emerald-50 hover:bg-emerald-100" : "bg-gray-100 text-transparent cursor-default"
+                        className={`w-8 h-8 text-xs rounded border transition-colors ${
+                          !exists
+                            ? "bg-gray-100 text-transparent cursor-default"
+                            : isSelected
+                            ? "bg-emerald-600 text-white border-emerald-700"
+                            : "bg-emerald-50 hover:bg-emerald-100"
                         }`}
                         disabled={!exists}
                         title={exists ? `Seat ${seatNum}` : ""}
+                        onClick={() => {
+                          if (!exists) return;
+                          if (isSelected) {
+                            setSelectedSeats(selectedSeats.filter((n) => n !== seatNum));
+                          } else {
+                            setSelectedSeats([...selectedSeats, seatNum].sort((a, b) => a - b));
+                          }
+                        }}
                       >
                         {exists ? seatNum : ""}
                       </button>
@@ -136,6 +156,34 @@ export default function SeatsPage() {
             </div>
           )}
         </div>
+
+        {/* Footer summary and proceed */}
+        {!loading && !error && show && (
+          <div className="mt-4 flex items-center justify-between bg-white border rounded-md p-3">
+            <div className="text-sm text-gray-700">
+              <span className="font-medium">Selected:</span> {selectedSeats.length > 0 ? selectedSeats.join(", ") : "None"}
+              {selectedSeats.length > 0 && (
+                <span className="ml-2 text-gray-500">· Total: ₹{(show.base_price * selectedSeats.length).toFixed(2)}</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className="px-3 py-2 text-sm rounded border hover:bg-gray-50"
+                onClick={() => clearSelectedSeats()}
+                disabled={selectedSeats.length === 0}
+              >
+                Clear
+              </button>
+              <button
+                className="px-4 py-2 text-sm rounded bg-rose-600 text-white disabled:opacity-60"
+                disabled={selectedSeats.length === 0}
+                onClick={() => navigate(`/summary?show_id=${show.id}`)}
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
