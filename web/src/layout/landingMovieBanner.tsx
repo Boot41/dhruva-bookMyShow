@@ -60,8 +60,7 @@ export default function LandingMovieBanner() {
             <LandingPageMovieCard
               movie={m}
               onClick={() => {
-                if (!cityId) return;
-                navigate(`/book?movie_id=${m.id}&city_id=${cityId}`);
+                navigate(`/movie/${m.id}`);
               }}
             />
           </div>

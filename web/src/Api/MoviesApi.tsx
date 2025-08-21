@@ -8,6 +8,9 @@ export type MovieBase = {
   description?: string | null;
   duration_minutes: number;
   poster_url?: string | null;
+  language?: string; // optional in TS to be lenient on client; backend requires it for create
+  genres?: string[] | null;
+  release_date?: string | null; // ISO date
 };
 
 export type MovieCreate = MovieBase;
