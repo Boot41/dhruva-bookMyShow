@@ -12,6 +12,32 @@ export type Screen = {
 };
 
 /**
+ * Calls GET /theaters/{theater_id}/screens
+ */
+export async function listScreensForTheater(theaterId: number): Promise<Screen[]> {
+  const res = await fetch(`${API_BASE_URL}/theaters/${theaterId}/screens`, {
+    method: "GET",
+    headers: { Accept: "application/json" },
+  });
+
+  let data: unknown = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || "Failed to load screens";
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  if (!Array.isArray(data)) {
+    throw new ApiError("Malformed screens response", res.status, data);
+  }
+
+  return data as Screen[];
+}
+
+/**
  * Calls GET /screens/{screen_id}
  */
 export async function getScreen(screenId: number): Promise<Screen> {
@@ -45,3 +71,4 @@ export async function getScreen(screenId: number): Promise<Screen> {
 
   return s as Screen;
 }
+

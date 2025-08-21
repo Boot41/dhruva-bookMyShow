@@ -121,3 +121,55 @@ export async function getShow(showId: number): Promise<Show> {
   return s as Show;
 }
 
+
+export type ShowCreate = {
+  movie_id: number;
+  screen_id: number;
+  show_date: string; // YYYY-MM-DD
+  show_time: string; // HH:MM:SS
+  base_price: number;
+};
+
+/**
+ * POST /shows (requires Bearer token)
+ */
+export async function createShow(payload: ShowCreate, accessToken: string): Promise<Show> {
+  const res = await fetch(`${API_BASE_URL}/shows`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  let data: unknown = null;
+  try { data = await res.json(); } catch {}
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || "Failed to create show";
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  return data as Show;
+}
+
+/**
+ * DELETE /shows/{show_id} (requires Bearer token)
+ */
+export async function deleteShow(showId: number, accessToken: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/shows/${showId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!res.ok) {
+    let data: unknown = null;
+    try { data = await res.json(); } catch {}
+    const message = (data as any)?.detail || "Failed to delete show";
+    throw new ApiError(String(message), res.status, data);
+  }
+}
+

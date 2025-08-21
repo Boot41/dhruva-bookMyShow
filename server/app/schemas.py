@@ -88,6 +88,14 @@ class ShowOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ShowCreate(BaseModel):
+    movie_id: int
+    screen_id: int
+    show_date: date
+    show_time: time
+    base_price: float
+
+
 # Bookings
 class BookingCreate(BaseModel):
     show_id: int

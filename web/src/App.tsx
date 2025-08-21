@@ -9,6 +9,7 @@ import BookingSummaryPage from './pages/BookingSummaryPage'
 import SignupPage from './pages/SignupPage'
 import ProfilePage from './pages/ProfilePage'
 import MoviePage from './pages/MoviePage'
+import TheaterManagementPage from './pages/TheaterManagementPage'
 
 export default function App() {
   return (
@@ -22,6 +23,8 @@ export default function App() {
       <Route path="/summary" element={<BookingSummaryPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/movie/:id" element={<MoviePage />} />
+      <Route path="/theater-management" element={<TheaterManagementPage />} />
     </Routes>
   )
 }
+
