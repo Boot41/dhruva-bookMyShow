@@ -14,7 +14,7 @@ export default function LandingPage() {
 
   return (
     <div>
-      <Header />
+      <Header enableCitySelect />
 
       <CitySelectorDialog
         open={open}
@@ -28,7 +28,7 @@ export default function LandingPage() {
       {selectedCity && (
         <div className="p-4">
           <h2 className="text-xl font-semibold">
-            Selected City: {selectedCity.name}
+            {selectedCity.name}
           </h2>
           <p className="text-gray-600">
             {selectedCity.state && `${selectedCity.state}, `}
@@ -38,7 +38,9 @@ export default function LandingPage() {
       )}
 
       {/* Recommended Movies Banner */}
-      <LandingMovieBanner />
+      <div className="flex justify-center">
+        <LandingMovieBanner />
+      </div>
     </div>
   );
 }

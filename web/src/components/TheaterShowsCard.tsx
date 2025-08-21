@@ -52,39 +52,41 @@ export default function TheaterShowsCard({ theater, movieId, cityId, date, onSel
 
   return (
     <div className="p-4 border rounded-lg hover:shadow-sm transition bg-white">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="font-semibold text-lg">{theater.name}</div>
-          <div className="text-sm text-gray-600">{theater.address}</div>
+      <div className="flex flex-col gap-2xl sm:flex-row sm:items-start">
+        {/* Left: Theater info */}
+        <div className="min-w-0">
+          <div className="font-semibold text-lg truncate">{theater.name}</div>
+          <div className="text-sm text-gray-600 truncate">{theater.address}</div>
         </div>
-      </div>
 
-      <div className="mt-3">
-        {loading && <div className="text-gray-600 text-sm">Loading showtimes…</div>}
-        {error && <div className="text-red-600 text-sm">{error}</div>}
-        {!loading && !error && shows.length === 0 && (
-          <div className="text-gray-600 text-sm">No showtimes available.</div>
-        )}
+        {/* Right: Shows / states */}
+        <div className="sm:text-left">
+          {loading && <div className="text-gray-600 text-sm">Loading showtimes…</div>}
+          {error && <div className="text-red-600 text-sm">{error}</div>}
+          {!loading && !error && shows.length === 0 && (
+            <div className="text-gray-600 text-sm">No showtimes available.</div>
+          )}
 
-        {shows.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {shows.map((s) => {
-              const baseCls = availabilityClass(s.available_seats);
-              const disabled = s.available_seats <= 0;
-              return (
-                <button
-                  key={s.id}
-                  className={`px-3 py-1.5 text-sm rounded-md border transition ${baseCls}`}
-                  onClick={() => !disabled && onSelectShow?.(s)}
-                  disabled={disabled}
-                  title={`Available: ${s.available_seats} | Base: ₹${s.base_price}`}
-                >
-                  {formatTime(s.show_time)}
-                </button>
-              );
-            })}
-          </div>
-        )}
+          {shows.length > 0 && (
+            <div className="flex flex-wrap gap-2 justify-start sm:justify-start">
+              {shows.map((s) => {
+                const baseCls = availabilityClass(s.available_seats);
+                const disabled = s.available_seats <= 0;
+                return (
+                  <button
+                    key={s.id}
+                    className={`px-3 py-1.5 text-sm rounded-md border transition ${baseCls}`}
+                    onClick={() => !disabled && onSelectShow?.(s)}
+                    disabled={disabled}
+                    title={`Available: ${s.available_seats} | Base: ₹${s.base_price}`}
+                  >
+                    {formatTime(s.show_time)}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

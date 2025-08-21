@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '../UI'
 import { login, ApiError, type LoginRequest } from '../Api/LoginAPI'
 
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<Partial<LoginRequest>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [loginError, setLoginError] = useState<string>('')
+  const navigate = useNavigate()
 
   const handleInputChange = (field: keyof LoginRequest) => (
     e: React.ChangeEvent<HTMLInputElement>
@@ -60,10 +62,9 @@ export default function LoginPage() {
       // Store token in localStorage (you might want to use a more secure method)
       localStorage.setItem('access_token', tokenResponse.access_token)
       
-      // Redirect to dashboard or home page
-      // You can replace this with your routing logic
+      // Navigate to home page after successful login
       console.log('Login successful:', tokenResponse)
-      alert('Login successful! Token stored in localStorage.')
+      navigate('/')
       
     } catch (error) {
       if (error instanceof ApiError) {

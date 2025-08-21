@@ -33,15 +33,13 @@ export default function LandingPageMovieCard({ movie, className = "", onClick }:
       tabIndex={onClick ? 0 : undefined}
     >
       <div className="relative">
-        <div className="rounded-xl overflow-hidden bg-gray-200 aspect-[2/3]">
-          {poster ? (
-            <img
-              src={poster}
-              alt={movie.title}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          ) : (
+        <div
+          className="rounded-xl overflow-hidden aspect-[2/3] bg-gray-200 bg-center bg-cover flex items-center justify-center"
+          style={poster ? { backgroundImage: `url(${poster})` } : undefined}
+          aria-label={movie.title}
+          role="img"
+        >
+          {!poster && (
             <div className="h-full w-full flex items-center justify-center text-gray-500">
               No Image
             </div>

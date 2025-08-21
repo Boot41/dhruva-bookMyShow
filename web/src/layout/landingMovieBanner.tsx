@@ -54,7 +54,7 @@ export default function LandingMovieBanner() {
       return <div className="text-gray-600 text-sm">No movies found.</div>;
 
     return (
-      <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory">
+      <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory bg-gray-100">
         {movies.map((m) => (
           <div key={m.id} className="snap-start">
             <LandingPageMovieCard
@@ -71,7 +71,7 @@ export default function LandingMovieBanner() {
   }, [cityId, loading, error, movies]);
 
   return (
-    <section className="px-4 md:px-6 lg:px-10 mt-4">
+    <section className="px-4 md:px-6 lg:px-10 mt-4 rounded-2xl bg-gray-100">
       <div className="flex items-baseline justify-between">
         <h2 className="text-xl md:text-2xl font-semibold mb-3">
           Recommended Movies
