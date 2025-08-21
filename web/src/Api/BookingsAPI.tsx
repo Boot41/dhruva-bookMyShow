@@ -4,6 +4,7 @@ const API_BASE_URL =
 export type BookingCreateReq = {
   show_id: number;
   seat_numbers: number[];
+  user_id: number;
 };
 
 export type BookingOut = {
@@ -158,4 +159,24 @@ export async function createBooking(req: BookingCreateReq): Promise<BookingOut> 
   }
 
   return data as BookingOut;
+}
+
+/**
+ * GET /bookings with optional user_id filter
+ */
+export async function listBookings(params?: { user_id?: number }): Promise<BookingOut[]> {
+  const qs = params?.user_id != null ? `?user_id=${encodeURIComponent(params.user_id)}` : '';
+  const res = await fetch(`${API_BASE_URL}/bookings${qs}`);
+
+  let data: unknown = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || 'Failed to fetch bookings';
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  return (data as BookingOut[]) ?? [];
 }

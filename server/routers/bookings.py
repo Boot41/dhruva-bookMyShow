@@ -29,7 +29,7 @@ def create_booking(payload: schemas.BookingCreate, db: Session = Depends(get_db)
     booking_ref = f"BMS-{rand}"
 
     booking = Booking(
-        user_id=None,  # plug auth later
+        user_id=payload.user_id,  # optional user association
         booking_type="movie",
         show_id=show.id,
         event_id=None,
@@ -42,6 +42,23 @@ def create_booking(payload: schemas.BookingCreate, db: Session = Depends(get_db)
     db.refresh(booking)
 
     return booking
+
+
+@router.get(
+    "/bookings",
+    response_model=list[schemas.BookingOut],
+)
+def list_bookings(user_id: int | None = None, db: Session = Depends(get_db)):
+    """List bookings, optionally filtered by user_id via query param.
+
+    Examples:
+    - GET /bookings -> all bookings
+    - GET /bookings?user_id=123 -> bookings for user 123
+    """
+    query = db.query(Booking)
+    if user_id is not None:
+        query = query.filter(Booking.user_id == user_id)
+    return query.all()
 
 
 @router.post(

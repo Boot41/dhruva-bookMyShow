@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '../UI'
-import { login, ApiError, type LoginRequest } from '../Api/LoginAPI'
+import { login, getMe, ApiError, type LoginRequest } from '../Api/LoginAPI'
 import { useAppStore } from '../store'
 
 export default function LoginPage() {
@@ -61,11 +61,23 @@ export default function LoginPage() {
     try {
       const tokenResponse = await login(formData)
       
-      // Store token in localStorage (you might want to use a more secure method)
+      // Store token
       localStorage.setItem('access_token', tokenResponse.access_token)
-      
-      // Save user in global store so header updates
-      setUser({ token: tokenResponse, email: formData.email })
+
+      // Fetch current user and store in global state
+      try {
+        const me = await getMe(tokenResponse.access_token)
+        setUser({
+          token: tokenResponse,
+          email: me.email,
+          id: me.id,
+          first_name: me.first_name,
+          last_name: me.last_name,
+        })
+      } catch (e) {
+        // Fallback: store token and email only
+        setUser({ token: tokenResponse, email: formData.email })
+      }
 
       // Navigate to home page after successful login
       console.log('Login successful:', tokenResponse)

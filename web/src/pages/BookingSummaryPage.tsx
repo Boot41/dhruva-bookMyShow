@@ -17,6 +17,7 @@ export default function BookingSummaryPage() {
   }, [params]);
 
   const selectedSeats = useAppStore((s) => s.selectedSeats);
+  const user = useAppStore((s) => s.user);
 
   const [show, setShow] = useState<Show | null>(null);
   const [screen, setScreen] = useState<Screen | null>(null);
@@ -136,13 +137,17 @@ export default function BookingSummaryPage() {
                   </button>
                   <button
                     className="px-4 py-2 text-sm rounded bg-rose-600 text-white disabled:opacity-60"
-                    disabled={selectedSeats.length === 0 || !showId || submitting}
+                    disabled={selectedSeats.length === 0 || !showId || submitting || !user?.id}
                     onClick={async () => {
                       if (!showId) return;
+                      if (!user?.id) {
+                        setError("Please sign in to proceed with booking.");
+                        return;
+                      }
                       setSubmitting(true);
                       setError(null);
                       try {
-                        const booking = await createBooking({ show_id: showId, seat_numbers: selectedSeats });
+                        const booking = await createBooking({ show_id: showId, seat_numbers: selectedSeats, user_id: user.id });
                         // Lock the seats against the created booking
                         try {
                           await createBookingSeats({

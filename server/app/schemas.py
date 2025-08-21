@@ -103,6 +103,7 @@ class ShowOut(BaseModel):
 class BookingCreate(BaseModel):
     show_id: int
     seat_numbers: list[int]
+    user_id: int
 
 
 class BookingOut(BaseModel):

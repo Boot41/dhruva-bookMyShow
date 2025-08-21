@@ -17,6 +17,9 @@ const TTL_MS = 2 * 60 * 1000; // 2 minutes
 type User = {
   token: TokenResponse;
   email?: string;
+  id?: number; // fetched via /auth/me
+  first_name?: string;
+  last_name?: string;
 };
 
 interface AppState {

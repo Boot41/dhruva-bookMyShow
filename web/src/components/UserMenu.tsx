@@ -68,6 +68,16 @@ export default function UserMenu() {
             type="button"
             className="w-full text-left px-3 py-2 hover:bg-[color:var(--color-secondary-100)]"
             onClick={() => {
+              setOpen(false)
+              navigate('/profile')
+            }}
+          >
+            Profile
+          </button>
+          <button
+            type="button"
+            className="w-full text-left px-3 py-2 hover:bg-[color:var(--color-secondary-100)]"
+            onClick={() => {
               try { localStorage.removeItem('access_token') } catch {}
               clearUser()
               setOpen(false)

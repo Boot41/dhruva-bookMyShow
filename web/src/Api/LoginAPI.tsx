@@ -11,6 +11,14 @@ export type TokenResponse = {
   token_type: string;
 };
 
+export type UserOut = {
+  id: number;
+  email: string;
+  phone?: string | null;
+  first_name: string;
+  last_name: string;
+};
+
 export class ApiError extends Error {
   status: number;
   details?: unknown;
@@ -57,4 +65,27 @@ export async function login(req: LoginRequest): Promise<TokenResponse> {
   }
 
   return token as TokenResponse;
+}
+
+/**
+ * GET /auth/me to fetch the current authenticated user
+ */
+export async function getMe(token: string): Promise<UserOut> {
+  const res = await fetch(`${API_BASE_URL}/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  let data: unknown = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) {
+    const message = (data as any)?.detail || "Failed to fetch current user";
+    throw new ApiError(String(message), res.status, data);
+  }
+
+  return data as UserOut;
 }
