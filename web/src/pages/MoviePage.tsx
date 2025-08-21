@@ -7,6 +7,7 @@ import CitySelectorDialog from "../components/CitySelectorDialog";
 import DateStrip from "../components/DateStrip";
 import TheaterShowsCard from "../components/TheaterShowsCard";
 import type { Theater } from "../Api/TheatersAPI";
+import MovieHero from "../layout/MovieHero";
 
 export default function MoviePage() {
   const { id } = useParams<{ id: string }>();
@@ -86,10 +87,6 @@ export default function MoviePage() {
     };
   }, [movieId, selectedCity?.id, date, fetchTheaters, fetchShows]);
 
-  function infoPill(label: string) {
-    return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700 border border-gray-200">{label}</span>;
-  }
-
   const genres = Array.isArray((movie as any)?.genres) ? (movie as any)?.genres?.join(" / ") : undefined;
 
   return (
@@ -113,53 +110,37 @@ export default function MoviePage() {
         </div>
 
         {/* Movie hero */}
-        <div className="flex flex-col md:flex-row gap-5">
-          {/* Poster */}
-          <div className="w-full md:w-64">
-            <div
-              className="rounded-xl overflow-hidden aspect-[2/3] bg-gray-200 bg-center bg-cover"
-              style={movie?.poster_url ? { backgroundImage: `url(${movie.poster_url})` } : undefined}
-            />
-          </div>
-
-          {/* Details */}
-          <div className="flex-1 min-w-0">
-            {loadingMovie && <div className="text-gray-600">Loading movie…</div>}
-            {movieError && <div className="text-red-600">{movieError}</div>}
-            {movie && (
-              <div>
-                <h1 className="text-2xl md:text-3xl font-semibold">{movie.title}</h1>
-
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {movie.language && infoPill(movie.language)}
-                  {typeof movie.duration_minutes === "number" && infoPill(`${movie.duration_minutes} mins`)}
-                  {genres && infoPill(genres)}
-                  {(movie as any).release_date && infoPill(new Date((movie as any).release_date).toDateString())}
-                </div>
-
-                {movie.description && (
-                  <p className="mt-3 text-gray-800 max-w-3xl whitespace-pre-wrap">{movie.description}</p>
-                )}
-
-                <div className="mt-4 flex gap-2">
-                  <button
-                    className="px-4 py-2 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
-                    disabled={!selectedCity}
-                    onClick={() => {
-                      if (!movieId || !selectedCity?.id) return;
-                      const sp = new URLSearchParams();
-                      sp.set("movie_id", String(movieId));
-                      sp.set("city_id", String(selectedCity.id));
-                      if (date) sp.set("date", date);
-                      navigate({ pathname: "/book", search: `?${sp.toString()}` });
-                    }}
-                  >
-                    Book Tickets
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+        <div>
+          {loadingMovie && <div className="text-gray-600">Loading movie…</div>}
+          {movieError && <div className="text-red-600">{movieError}</div>}
+          {movie && (
+            <MovieHero
+              posterUrl={movie.poster_url ?? undefined}
+              title={movie.title}
+              pills={[
+                ...(movie.language ? [movie.language] : []),
+                ...(typeof movie.duration_minutes === "number" ? [`${movie.duration_minutes} mins`] : []),
+                ...(genres ? [genres] : []),
+                ...(((movie as any).release_date) ? [new Date((movie as any).release_date).toDateString()] : []),
+              ]}
+              description={movie.description || undefined}
+            >
+              <button
+                className="px-4 py-2 rounded-md bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
+                disabled={!selectedCity}
+                onClick={() => {
+                  if (!movieId || !selectedCity?.id) return;
+                  const sp = new URLSearchParams();
+                  sp.set("movie_id", String(movieId));
+                  sp.set("city_id", String(selectedCity.id));
+                  if (date) sp.set("date", date);
+                  navigate({ pathname: "/book", search: `?${sp.toString()}` });
+                }}
+              >
+                Book Tickets
+              </button>
+            </MovieHero>
+          )}
         </div>
 
         {/* Date selector */}
