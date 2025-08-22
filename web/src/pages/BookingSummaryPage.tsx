@@ -159,8 +159,15 @@ export default function BookingSummaryPage() {
                           // If locking fails, surface error and stop further flow
                           throw new Error(e?.message || "Failed to lock seats for booking");
                         }
-                        // For now, just notify and stay; future: navigate to payment page
-                        alert(`Booking created and seats locked. ID: ${booking.id}\nAmount: ₹${booking.final_amount.toFixed(2)}`);
+                        // Navigate home with a success toast
+                        navigate('/', {
+                          state: {
+                            toast: {
+                              type: 'success',
+                              message: 'Booking confirmed',
+                            },
+                          },
+                        });
                       } catch (e: any) {
                         setError(e?.message || "Failed to create booking");
                       } finally {

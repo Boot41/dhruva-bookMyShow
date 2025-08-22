@@ -33,3 +33,16 @@ dev = [
 [tool.pytest.ini_options]
 # Explicitly set pytest-asyncio default fixture loop scope to avoid deprecation warnings
 asyncio_default_fixture_loop_scope = "function"
+addopts = "--cov=app --cov=routers --cov=useage --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["app", "routers", "useage"]
+branch = true
+omit = [
+  "*/tests/*",
+  "app/main.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
