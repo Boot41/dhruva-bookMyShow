@@ -12,8 +12,8 @@ from .db import Base
 class User(Base):
     __tablename__ = "users"
     __table_args__ = (
-        UniqueConstraint("email", name="uq_users_email"),
-        UniqueConstraint("phone", name="uq_users_phone"),
+        UniqueConstraint("email", name="uq_users_email"),   # Enforce unique email
+        UniqueConstraint("phone", name="uq_users_phone"),   # Enforce unique phone
     )
 
     # Use Integer PK to ensure SQLite autoincrement works correctly
@@ -30,6 +30,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
 
+
 class Movie(Base):
     __tablename__ = "movies"
 
@@ -39,7 +40,7 @@ class Movie(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
     release_date: Mapped[date] = mapped_column(Date, nullable=True)
     language: Mapped[str] = mapped_column(String(50), nullable=False)
-    genres: Mapped[list[str]] = mapped_column(JSONB, nullable=True)
+    genres: Mapped[list[str]] = mapped_column(JSONB, nullable=True)  # JSONB for flexible list storage
     poster_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
 
@@ -59,7 +60,7 @@ class Theater(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     address: Mapped[str] = mapped_column(Text, nullable=False)
     city_id: Mapped[int] = mapped_column(Integer, ForeignKey("cities.id"), index=True)
-    amenities: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    amenities: Mapped[dict | None] = mapped_column(JSONB, nullable=True)  # JSONB for arbitrary amenity flags
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 
@@ -71,13 +72,13 @@ class Screen(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     screen_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
     total_seats: Mapped[int] = mapped_column(Integer, nullable=False)
-    layout_config: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    layout_config: Mapped[dict] = mapped_column(JSONB, nullable=False)  # Stores seat layout (sections/rows)
 
 
 class Show(Base):
     __tablename__ = "shows"
     __table_args__ = (
-        UniqueConstraint("screen_id", "show_date", "show_time", name="uq_shows_screen_date_time"),
+        UniqueConstraint("screen_id", "show_date", "show_time", name="uq_shows_screen_date_time"),  # Prevent duplicate show slots
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
@@ -113,13 +114,13 @@ class BookingSeat(Base):
     booking_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("bookings.id"), index=True)
     show_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("shows.id"), index=True)
     # Storing selected seat ids as an array in JSONB per table design
-    seat_id: Mapped[list[int]] = mapped_column(JSONB, nullable=False)
+    seat_id: Mapped[list[int]] = mapped_column(JSONB, nullable=False)  # JSONB array of seat ids per booking
 
 
 class TheaterUserMembership(Base):
     __tablename__ = "theater_user_memberships"
     __table_args__ = (
-        UniqueConstraint("user_id", "theater_id", name="uq_theater_user_membership_user_theater"),
+        UniqueConstraint("user_id", "theater_id", name="uq_theater_user_membership_user_theater"),  # Prevent duplicate membership
     )
 
     # BIGSERIAL in Postgres; using BigInteger PK for portability
@@ -129,6 +130,6 @@ class TheaterUserMembership(Base):
     # FK to theaters.id (theaters.id is BigInteger)
     theater_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("theaters.id"), index=True, nullable=False)
     role: Mapped[str] = mapped_column(String(50), nullable=False)
-    permissions: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    permissions: Mapped[dict | None] = mapped_column(JSONB, nullable=True)  # JSONB for arbitrary permission flags
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

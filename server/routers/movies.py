@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app import schemas
-from routers.auth import get_current_user  # protect write ops
+from routers.auth import get_current_user  # Protect write ops via auth dependency
 from useage.movie_service import (
     create_movie as create_movie_svc,
     list_movies as list_movies_svc,
@@ -13,20 +13,22 @@ from useage.movie_service import (
 
 router = APIRouter(prefix="/movies", tags=["movies"])
 
+# Auth-protected write operation
 @router.post("", response_model=schemas.MovieOut, status_code=status.HTTP_201_CREATED)
 def create_movie(movie_in: schemas.MovieCreate, db: Session = Depends(get_db), user=Depends(get_current_user)):
     try:
         return create_movie_svc(movie_in, db)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")  # Generic 500 fallback
 
 @router.get("", response_model=list[schemas.MovieOut])
 def list_movies(db: Session = Depends(get_db)):
     return list_movies_svc(db)
 
+# Query parameter: city_id is required for filtering
 @router.get("/playing", response_model=list[schemas.MovieOut])
 def list_playing_movies(
-    city_id: int = Query(..., description="City ID"),
+    city_id: int = Query(..., description="City ID"),  # Required filter
     db: Session = Depends(get_db),
 ):
     """Return distinct movies that have at least one show in the specified city.
@@ -39,11 +41,12 @@ def list_playing_movies(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+# Error mapping: 404 for MovieNotFoundError, 500 for other exceptions
 @router.get("/{movie_id}", response_model=schemas.MovieOut)
 def get_movie(movie_id: int, db: Session = Depends(get_db)):
     try:
         return get_movie_svc(movie_id, db)
     except MovieNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))  # Resource not found
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

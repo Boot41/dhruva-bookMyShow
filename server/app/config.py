@@ -15,11 +15,13 @@ class Settings(BaseSettings):
     jwt_secret_key: str = Field(default="CHANGE_ME_SUPER_SECRET")
     jwt_algorithm: str = Field(default="HS256")
     access_token_expire_minutes: int = Field(default=60 * 24)  # 24 hours
-    
+    # IMPORTANT: defaults above are convenient for local dev only. Override via env vars in prod.
+    # The secret key MUST be set securely (e.g., BMS_JWT_SECRET_KEY) and never left as default.
+
     # Pydantic v2 settings config
     model_config = SettingsConfigDict(
-        env_prefix="BMS_",
-        env_file=".env",
+        env_prefix="BMS_",           # All env vars are expected to be prefixed, e.g. BMS_DATABASE_URL
+        env_file=".env",              # Loads from server/.env for local development
         case_sensitive=False,
     )
 

@@ -24,25 +24,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.on_event("startup")
 def on_startup():
-    # Create tables if not exist (for initial dev). Use Alembic for real migrations later.
+    # Dev convenience: auto-creates tables if missing.
+    # Use proper migrations for schema changes in staging/prod.
     Base.metadata.create_all(bind=engine)
-
 
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}
 
-
 # Routers
-app.include_router(auth_router.router)
-app.include_router(movies_router.router)
-app.include_router(theaters_router.router)
-app.include_router(shows_router.router)
-app.include_router(cities_router.router)
-app.include_router(screens_router.router)
-app.include_router(bookings_router.router)
-app.include_router(search_router.router)
-app.include_router(theater_memberships_router.router)
+app.include_router(auth_router.router)  # Auth endpoints (register/login/me)
+app.include_router(movies_router.router)  # Movies CRUD/listing (write ops protected)
+app.include_router(theaters_router.router)  # Theater listings (city/movie filters)
+app.include_router(shows_router.router)  # Show search/create/delete (protected)
+app.include_router(cities_router.router)  # Cities listing
+app.include_router(screens_router.router)  # Screens by theater
+app.include_router(bookings_router.router)  # Booking APIs and seat holds/status
+app.include_router(search_router.router)  # Unified search across movies/theaters
+app.include_router(theater_memberships_router.router)  # Theater admin memberships

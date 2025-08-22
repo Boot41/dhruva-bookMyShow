@@ -6,21 +6,19 @@ from app.db import get_db
 from app import schemas
 from app.models import City, Theater, Show, Screen
 
-router = APIRouter(tags=["theaters"])
-
+router = APIRouter(tags=["theaters"])  # Theater listing endpoints
 
 # @router.get("/cities", response_model=list[schemas.CityOut])
 # def list_cities(db: Session = Depends(get_db)):
 #     return db.query(City).all()
 
-
 @router.get("/theaters", response_model=list[schemas.TheaterOut])
 def list_theaters(
-    city_id: int = Query(..., description="City ID"),
-    movie_id: Optional[int] = Query(None, description="Filter by movie id"),
-    latitude: Optional[float] = None,
-    longitude: Optional[float] = None,
-    db: Session = Depends(get_db),
+    city_id: int = Query(..., description="City ID"),  # Required: only active theaters in this city
+    movie_id: Optional[int] = Query(None, description="Filter by movie id"),  # Optional: filter theaters that play the movie
+    latitude: Optional[float] = None,  # Accepted but not used for sorting yet
+    longitude: Optional[float] = None,  # Accepted but not used for sorting yet
+    db: Session = Depends(get_db),  # DB session dependency
 ):
     q = db.query(Theater).filter(Theater.city_id == city_id, Theater.is_active == True)
 
