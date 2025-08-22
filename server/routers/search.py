@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from app.db import get_db
 from app import schemas
-from app.models import Movie, Theater
 from pydantic import BaseModel
+from useage.search_service import unified_search as unified_search_svc
 
 router = APIRouter(prefix="/search", tags=["search"]) 
 
@@ -23,33 +22,7 @@ def unified_search(
     limit_theaters: int = Query(5, ge=1, le=50),
     db: Session = Depends(get_db),
 ):
-    q_norm = q.strip().lower()
-
-    # Movies: simple case-insensitive contains match on title
-    m_query = (
-        db.query(Movie)
-        .filter(func.lower(Movie.title).like(f"%{q_norm}%"))
-        .order_by(func.length(Movie.title))
-        .limit(limit_movies)
-    )
-    movies = m_query.all()
-
-    # Theaters: require city_id to keep search scoped; if not provided, return empty list
-    theaters: list[Theater] = []
-    if city_id is not None:
-        t_query = (
-            db.query(Theater)
-            .filter(
-                Theater.city_id == city_id,
-                Theater.is_active == True,  # noqa: E712
-                (
-                    func.lower(Theater.name).like(f"%{q_norm}%")
-                    | func.lower(Theater.address).like(f"%{q_norm}%")
-                ),
-            )
-            .order_by(func.length(Theater.name))
-            .limit(limit_theaters)
-        )
-        theaters = t_query.all()
-
-    return {"movies": movies, "theaters": theaters}
+    try:
+        return unified_search_svc(q, city_id, limit_movies, limit_theaters, db)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal server error: {str(e)}")
