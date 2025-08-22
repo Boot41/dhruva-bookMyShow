@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Venvs
+.venv/
+venv/
+ENV/
+
+# Tests & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+
+# Git
+.git/
+.gitignore
+
+# Env files (mounted at runtime, not built-in)
+.env
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+
+# Misc
+.DS_Store
+*.log
+**/__init__.pyc

@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./server
+    image: bms-server
+    container_name: bms-server-dev
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./server/.env
+    environment:
+      - BMS_DATABASE_URL=postgresql+psycopg2://postgres:postgres@host.docker.internal:5432/bookmyshow
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+    image: bms-web
+    container_name: bms-web-dev
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
