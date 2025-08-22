@@ -5,6 +5,9 @@ import { useAppStore } from '../store'
 export default function UserMenu() {
   const user = useAppStore((s) => s.user)
   const clearUser = useAppStore((s) => s.clearUser)
+  const clearSelectedSeats = useAppStore((s) => s.clearSelectedSeats)
+  const clearSelectedCity = useAppStore((s) => s.clearSelectedCity)
+  const setSelectedDate = useAppStore((s) => s.setSelectedDate)
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -90,8 +93,29 @@ export default function UserMenu() {
             type="button"
             className="w-full text-left px-3 py-2 hover:bg-[color:var(--color-secondary-100)]"
             onClick={() => {
-              try { localStorage.removeItem('access_token') } catch {}
+              // Clear auth token and persisted app state
+              try {
+                localStorage.removeItem('access_token')
+                localStorage.removeItem('app-store')
+                // If zustand persist helpers are available, clear via API too
+                // @ts-ignore - persist may be attached at runtime by middleware
+                if (useAppStore.persist && typeof useAppStore.persist.clearStorage === 'function') {
+                  // @ts-ignore
+                  useAppStore.persist.clearStorage()
+                }
+              } catch {}
+
+              // Reset in-memory state for current session
               clearUser()
+              clearSelectedSeats()
+              clearSelectedCity()
+              setSelectedDate(null)
+              useAppStore.setState({
+                theatersCache: {},
+                showsCache: {},
+                inflightShows: {},
+                inflightTheaters: {},
+              })
               setOpen(false)
               navigate('/')
             }}
